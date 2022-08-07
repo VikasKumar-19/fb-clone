@@ -18,7 +18,6 @@ exports.validateUserName = async(userName)=>{
     let isUserNameExist = await User.findOne({username:finalUserName});
     if(isUserNameExist){
       finalUserName = userName + (new Date().getTime() * Math.random()).toString().substring(0,1);
-      console.log(finalUserName, "name");
       flag = false;
     }
     else{
