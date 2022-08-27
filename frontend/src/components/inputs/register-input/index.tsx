@@ -8,7 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement>, ClassAttribu
 type IProps = InputProps &
   FieldHookConfig<string>;
 
-const LoginInput: FC<IProps> = ({bottom, ...props}) => {
+const RegisterInput: FC<IProps> = ({bottom, ...props}) => {
   const [field, meta] = useField(props);
 
   return (
@@ -38,4 +38,4 @@ const LoginInput: FC<IProps> = ({bottom, ...props}) => {
   );
 };
 
-export default LoginInput;
+export default RegisterInput;

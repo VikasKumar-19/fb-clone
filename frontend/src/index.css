@@ -765,4 +765,10 @@
     width: 21px;
   }
 
+  .custom-backdrop__blur{
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.760);
+    z-index: 1009;
+  }
 }

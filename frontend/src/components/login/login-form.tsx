@@ -25,7 +25,7 @@ const validationSchema = Yup.object({
 
 const LoginForm = () => {
   return (
-    <div className="login_wrap h-[78vh] text-color__primary md:flex md:items-center md:max-w-5xl md:mx-auto">
+    <div className="login_wrap min-h-[78vh]  text-color__primary md:flex md:items-center md:max-w-5xl md:mx-auto">
       <div className="login-1 w-80 mx-auto md:flex md:flex-col md:w-1/2 md:mb-[15vh]">
         <img
           className="md:w-[300px] md:-ml-[1.7rem]"

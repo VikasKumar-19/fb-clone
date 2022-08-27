@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const LoginFooter = () => {
   return (
-    <footer className="login_footer h-[22vh] bg-primary p-6">
+    <footer className="login_footer min-h-[22vh] bg-primary p-6">
       <div className="login_footer_wrap">
         <Link to="/">English(UK)</Link>
         <Link to="/">Français(FR)</Link>
