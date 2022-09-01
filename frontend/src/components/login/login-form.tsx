@@ -54,7 +54,7 @@ const LoginForm = () => {
                 <LoginInput
                   type="password"
                   name="password"
-                  autoComplete=""
+                  autoComplete="on"
                   placeholder="Enter your password"
                   bottom={true}
                 />

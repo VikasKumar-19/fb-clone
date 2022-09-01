@@ -1,5 +1,5 @@
-import { Form, Formik } from "formik";
-import React from "react";
+import { Form, Formik, FormikProps } from "formik";
+import React, { ChangeEvent, useMemo, useRef, useState } from "react";
 import RegisterInput from "../inputs/register-input";
 
 interface RegisterFormState {
@@ -7,10 +7,11 @@ interface RegisterFormState {
   last_name: string;
   email: string;
   password: string;
-  bYear: string;
-  bMonth: string;
-  bDay: string;
+  bYear: number;
+  bMonth: number;
+  bDay: number;
   gender: string;
+  daysListOfMonth: number[];
 }
 
 const initialValues: RegisterFormState = {
@@ -18,13 +19,36 @@ const initialValues: RegisterFormState = {
   last_name: "",
   email: "",
   password: "",
-  bYear: "",
-  bMonth: "",
-  bDay: "",
+  bYear: new Date().getFullYear(),
+  bMonth: new Date().getMonth() + 1,
+  bDay: new Date().getDate(),
   gender: "",
+  daysListOfMonth: [],
+};
+
+const getDays = (year: number, month: number) => {
+  return new Date(year, month, 0).getDate();
 };
 
 const RegisterForm = () => {
+  const years = Array.from(
+    new Array(100),
+    (val, index) => initialValues.bYear - index
+  ); //this will return the array of 100 previous years.
+
+  const months = Array.from(new Array(12), (val, index) => index + 1);
+  const getDaysList = (year: number, month: number) => {
+    return Array.from(
+      new Array(getDays(year, month)),
+      (val, index) => index + 1
+    );
+  };
+  const daysList = useMemo(
+    () => getDaysList(initialValues.bYear, initialValues.bMonth),
+    []
+  );
+  console.log(daysList, "daysLIst");
+
   return (
     <div className="custom-backdrop__blur ">
       <div className="register absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary shadow-[0_1px_2px] shadow-shadow__1 rounded-lg p-4 pb-4 w-[350px] h-fit text-color__primary">
@@ -35,10 +59,13 @@ const RegisterForm = () => {
             It's quick and easy
           </span>
         </div>
-        <Formik initialValues={initialValues} onSubmit={() => {}}>
+        <Formik
+          initialValues={{ ...initialValues, daysListOfMonth: daysList }}
+          onSubmit={() => {}}
+        >
           {(formik) => (
             <Form className="register_form w-full flex flex-col items-center">
-              <div className="regi_line py-2 flex flex-col gap-2">
+              <div className="regi_line py-1.5 flex flex-col gap-1.5">
                 <RegisterInput
                   type="text"
                   placeholder="First name"
@@ -50,7 +77,7 @@ const RegisterForm = () => {
                   name="last_name"
                 />
               </div>
-              <div className="regi_line py-2 flex flex-col gap-2">
+              <div className="regi_line py-2 pt-0 flex flex-col gap-1.5">
                 <RegisterInput
                   type="text"
                   placeholder="Mobile number or Email address"
@@ -60,6 +87,7 @@ const RegisterForm = () => {
                   type="password"
                   placeholder="New Password"
                   name="password"
+                  autoComplete="on"
                 />
               </div>
               <div className="reg_col relative self-start mb-2 px-2">
@@ -70,20 +98,54 @@ const RegisterForm = () => {
                   <select
                     className="w-24 text-base text-color__primary bg-primary rounded-md cursor-pointer border border-dark_color__secondary outline-none"
                     name="bDay"
+                    value={formik.values.bDay}
+                    onChange={formik.handleChange}
                   >
-                    <option value="14">14</option>
+                    {formik.values.daysListOfMonth.map((date) => (
+                      <option key={date} value={formik.values.bDay}>
+                        {date}
+                      </option>
+                    ))}
                   </select>
                   <select
                     className="w-24 text-base text-color__primary bg-primary rounded-md cursor-pointer border border-dark_color__secondary outline-none"
                     name="bMonth"
+                    value={formik.values.bMonth}
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      formik.setFieldValue(name, value);
+                      const _daysList = getDaysList(
+                        formik.values.bYear,
+                        Number(value)
+                      );
+                      formik.setFieldValue("daysListOfMonth", _daysList);
+                    }}
                   >
-                    <option value="14">14</option>
+                    {months.map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
                   </select>
                   <select
                     className="w-24 text-base text-color__primary bg-primary rounded-md cursor-pointer border border-dark_color__secondary outline-none"
                     name="bYear"
+                    value={formik.values.bYear}
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      formik.setFieldValue(name, value);
+                      const _daysList = getDaysList(
+                        Number(value),
+                        formik.values.bMonth
+                      );
+                      formik.setFieldValue("daysListOfMonth", _daysList);
+                    }}
                   >
-                    <option value="14">14</option>
+                    {years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -92,25 +154,51 @@ const RegisterForm = () => {
                   Gender <i className="info_icon mt-0.5" />
                 </div>
                 <div className="reg_grid mt-1.5 grid grid-cols-3 gap-2.5 h-9 w-full">
-                  <label className="w-24 flex items-center justify-between text-base text-color__primary rounded-md cursor-pointer border border-dark_color__secondary px-2.5" htmlFor="male">
+                  <label
+                    className="w-24 flex items-center justify-between text-base text-color__primary rounded-md cursor-pointer border border-dark_color__secondary px-2.5"
+                    htmlFor="male"
+                  >
                     Male
                     <input type="radio" value="male" name="gender" id="male" />
                   </label>
-                  <label className="w-24 flex items-center justify-between text-base text-color__primary rounded-md cursor-pointer border border-dark_color__secondary px-2.5" htmlFor="female">
+                  <label
+                    className="w-24 flex items-center justify-between text-base text-color__primary rounded-md cursor-pointer border border-dark_color__secondary px-2.5"
+                    htmlFor="female"
+                  >
                     Female
-                    <input type="radio" value="female" name="gender" id="female" />
+                    <input
+                      type="radio"
+                      value="female"
+                      name="gender"
+                      id="female"
+                    />
                   </label>
-                  <label className="w-24 flex items-center justify-between text-base text-color__primary rounded-md cursor-pointer border border-dark_color__secondary px-2.5" htmlFor="custom">
+                  <label
+                    className="w-24 flex items-center justify-between text-base text-color__primary rounded-md cursor-pointer border border-dark_color__secondary px-2.5"
+                    htmlFor="custom"
+                  >
                     Custom
-                    <input type="radio" value="custom" name="gender" id="custom" />
+                    <input
+                      type="radio"
+                      value="custom"
+                      name="gender"
+                      id="custom"
+                    />
                   </label>
                 </div>
               </div>
               <div className="reg_infos text-xs mt-2.5 text-color__secondary">
-                By clicking Sign Up, you agree to our <span className="text-blue__color">Terms, Data Policy &npsp;</span> and <span className="text-blue__color">Cookie Policy</span> You may receive SMS notifications from us and can opt at any time.
+                By clicking Sign Up, you agree to our{" "}
+                <span className="text-blue__color">
+                  Terms, Data Policy &npsp;
+                </span>{" "}
+                and <span className="text-blue__color">Cookie Policy</span> You
+                may receive SMS notifications from us and can opt at any time.
               </div>
               <div className="reg_btn_wrapper w-full flex items-center justify-center mb-2.5 mt-5 ">
-                <button className="button_presets w-3/4 bg-green__color open_signup">Sign Up</button>
+                <button className="button_presets w-3/4 bg-green__color open_signup">
+                  Sign Up
+                </button>
               </div>
             </Form>
           )}
